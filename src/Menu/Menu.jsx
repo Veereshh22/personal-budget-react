@@ -1,13 +1,15 @@
 // import React from 'react'
 
+import { Link } from "react-router-dom"
+
 const Menu = () => {
   return (
     <nav className="menu" role="navigation" aria-label="Main menu"> 
         <ul>
             
-            <li><a href="/" title="Homepage-Personal Budget">Homepage</a></li>
-            <li><a href="/personal-budget1/about.html" title="Learn more about personal budget">About</a></li>
-            <li><a href="/personal-budget1/login.html" title="Login to personal budget">Login</a></li>
+            <li><Link to="/" title="Homepage-Personal Budget">Homepage</Link></li>
+            <li><Link to="about" title="Learn more about personal budget">About</Link></li>
+            <li><Link to="/login" title="Login to personal budget">Login</Link></li>
             
         </ul>
     </nav>

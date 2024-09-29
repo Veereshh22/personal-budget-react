@@ -1,5 +1,78 @@
+/* eslint-disable react/prop-types */
+import { useEffect, useRef, useState } from "react"
 
-const HomePage = () => {
+import { Chart } from 'chart.js/auto';
+import * as d3 from "d3"
+
+// eslint-disable-next-line react/prop-types
+const HomePage = ({ myBudgetData, chartData }) => {
+ 
+
+ const chartRef = useRef(null);
+ const chartInstance = useRef(null);
+
+ useEffect(() => {
+    if(myBudgetData.length > 0){
+        createChart(chartData)
+        getBudgetDataForD3();
+    }
+ }, [myBudgetData])
+
+ 
+ const createChart = (data) => {
+    const ctx = chartRef.current.getContext('2d');
+    if(chartInstance.current){
+        chartInstance.current.destroy()
+    }
+    chartInstance.current = new Chart(ctx, {
+        type: 'pie',
+        data: chartData
+    })
+
+ }
+
+ const getBudgetDataForD3 = () => {
+    const width = 600;
+                    const height = 600;
+                    const radius = Math.min(width, height) / 2;
+                    d3.select("#chart").selectAll("*").remove();
+
+
+                    const svg = d3.select("#chart")
+                        .append("svg")
+                        .attr("width", width)
+                        .attr("height", height)
+                        .append("g")
+                        .attr("transform", `translate(${width / 2}, ${height / 2})`);
+                    const color = d3.scaleOrdinal(d3.schemeCategory10)
+                    const pie = d3.pie()
+                        .value(d => d.budget)
+                        .sort(null);
+
+                    const arc = d3.arc()
+                        .outerRadius(radius * 0.8)
+                        .innerRadius(radius * 0.4)
+                    const arcs = svg.selectAll("arc")
+                        .data(pie(myBudgetData))
+                        .enter()
+                        .append("g")
+                        .attr("class", "arc");
+
+                    arcs.append("path")
+                        .attr("d", arc)
+                        .attr("fill", (d, i) => color(i));
+
+                    arcs.append("text")
+                        .attr("transform", d => `translate(${arc.centroid(d)})`)
+                        .attr("dy", ".35em")
+                        .attr("text-anchor", "middle")
+                        .text(d => d.data.title)
+                        .style("font-size", "12px")
+                        .style("fill", "blue")
+                        .style("font-weight", "bold");
+
+
+ }
   return (
     <main className="container center" id="main-content" role="main"> 
 
@@ -33,7 +106,7 @@ const HomePage = () => {
             <article className="text-box">
                 <h2>Chart</h2>
                 <p>
-                    <canvas id="myChart" width="400" height="400"></canvas>
+                    <canvas id="myChart" ref={chartRef} width="400" height="400"></canvas>
                 </p>
             </article>
 
